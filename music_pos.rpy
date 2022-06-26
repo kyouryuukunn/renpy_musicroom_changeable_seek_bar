@@ -23,7 +23,6 @@
 
 #本家で同機能を実装するには
 #MusicRoom以外で使用するなら現在のプレイリスト、ループ, フェード設定の所得機能が必要
-#get_durationはプレフィックスのあるファイルの再生時に機能しないため、手動定義が必要
 init -100 python:
 
     def remove_play_prefix(filename):
