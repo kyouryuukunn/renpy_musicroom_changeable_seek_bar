@@ -88,8 +88,8 @@ init -100 python:
 
         def timer(self):
             fn = renpy.music.get_playing(self.channel)
-            # length = self.music_time.get(renpy.music.get_playing(self.channel), 0)
-            length = renpy.music.get_duration(self.channel)
+            length = self.music_time.get(renpy.music.get_playing(self.channel), 0)
+            # length = renpy.music.get_duration(self.channel)
             pos = renpy.music.get_pos(self.channel)
             self.manual_change = False
             if length == 0 or pos < 0 or pos > length:
@@ -111,8 +111,8 @@ init -100 python:
         def changed(self, changed):
             fn = renpy.music.get_playing(self.channel)
             fn = self.remove_prefix(fn)
-            # length = self.music_time.get(fn, 0)
-            length = renpy.music.get_duration(self.channel)
+            length = self.music_time.get(fn, 0)
+            # length = renpy.music.get_duration(self.channel)
             if length > 0 and self.manual_change:
                 fn = "<from "+str(changed*length)+" to "+str(length)+" loop 0>"+fn
                 self.Play(fn)()
