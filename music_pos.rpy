@@ -6,9 +6,6 @@
 # してミュージックルームを作成します。
 # mp = MusicRoom2(fadeout=1.0)
 
-#作成したインスタンスのmusic_time属性にlengthメンバ関数を使用して曲の長さを登録します。
-#mp.music_time['bgm/track1.ogg'] = mp.length(3, 14) #3分14秒
-
 #MusicRoomスクリーンでtimerメンバ関数をタイマーに設定します。
 #timer 1.0 repeat True action mp.timer
 
@@ -28,7 +25,15 @@
 #MusicRoom以外で使用するなら現在のプレイリスト、ループ, フェード設定の所得機能が必要
 #get_durationはプレフィックスのあるファイルの再生時に機能しないため、手動定義が必要
 init -100 python:
-    #内容は変更していないが、アクセス制限でこのファイルからは呼び出せないため再定義
+
+    def remove_play_prefix(filename):
+        if filename is None:
+            return None
+        m = re.match(r'<(.*)>(.*)', filename)
+        if not m:
+            return filename
+        return m.group(2)
+
     @renpy.pure
     class __MusicRoomPlay(Action, FieldEquality):
         """
@@ -48,7 +53,12 @@ init -100 python:
  
             renpy.restart_interaction()
 
-            if renpy.music.get_playing(self.mr.channel) == self.filename:
+            ##changed#####
+            # if renpy.music.get_playing(self.mr.channel) == self.filename:
+            filename = renpy.music.get_playing(self.mr.channel)
+            filename = remove_play_prefix(filename)
+            if filename == self.filename:
+            ##changed#####
                 if renpy.music.get_pause(self.mr.channel):
                     renpy.music.set_pause(False, self.mr.channel)
                     return
@@ -59,7 +69,12 @@ init -100 python:
             return self.mr.is_unlocked(self.filename)
 
         def get_selected(self):
-            return renpy.music.get_playing(self.mr.channel) == self.filename
+            ##changed#####
+            # return renpy.music.get_playing(self.mr.channel) == self.filename
+            filename = renpy.music.get_playing(self.mr.channel)
+            filename = remove_play_prefix(filename)
+            return filename == self.filename
+            ##changed#####
 
         def periodic(self, st):
             if self.selected != self.get_selected():
@@ -73,23 +88,14 @@ init -100 python:
     class MusicRoom2(MusicRoom):
         def __init__(self, *args, **kwargs):
             super(MusicRoom2, self).__init__(*args, **kwargs)
-            self.music_time = {}
             self.music_text = "00:00/00:00"
             self.music_adj = ui.adjustment(value=0., range=1., changed=self.changed, adjustable=True)
             self.manual_change = True
 
-        def remove_prefix(self, filename):
-            if filename is None:
-                return None
-            m = re.match(r'<(.*)>(.*)', filename)
-            if not m:
-                return filename
-            return m.group(2)
-
         def timer(self):
             fn = renpy.music.get_playing(self.channel)
-            length = self.music_time.get(renpy.music.get_playing(self.channel), 0)
-            # length = renpy.music.get_duration(self.channel)
+            fn = remove_play_prefix(fn)
+            length = renpy.music.get_duration(self.channel)
             pos = renpy.music.get_pos(self.channel)
             self.manual_change = False
             if length == 0 or pos < 0 or pos > length:
@@ -101,20 +107,17 @@ init -100 python:
 
             self.music_text = "%02d:%02d/%02d:%02d" % ( pos / 60, pos % 60, length / 60, length % 60)
 
-        def length(self, min, sec):
-            return min * 60 + sec
-
         def music_pos(self, *args, **kwargs):
             return DynamicDisplayable(self.dynamic_text, **kwargs)
         def dynamic_text(self, st, at, **kwargs):
             return Text(self.music_text, **kwargs), .1
         def changed(self, changed):
             fn = renpy.music.get_playing(self.channel)
-            fn = self.remove_prefix(fn)
-            length = self.music_time.get(fn, 0)
-            # length = renpy.music.get_duration(self.channel)
+            fn = remove_play_prefix(fn)
+            length = renpy.music.get_duration(self.channel)
             if length > 0 and self.manual_change:
-                fn = "<from "+str(changed*length)+" to "+str(length)+" loop 0>"+fn
+                #to があるとget_durationで再生時時間が所得できない
+                fn = "<from "+str(changed*length)+" loop 0>"+fn
                 self.Play(fn)()
 
         def Play(self, filename=None):
@@ -141,7 +144,7 @@ init -100 python:
 
             if filename is None:
                 filename = renpy.music.get_playing(channel=self.channel)
-                filename = self.remove_prefix(filename)
+                filename = remove_play_prefix(filename)
 
             try:
 ########changed##########
@@ -169,6 +172,7 @@ init -100 python:
                 playlist[playlist.index(m.group(2))] = filename
 ########added##########
 
+            renpy.store.test = playlist
             if queue:
                 renpy.music.queue(playlist, channel=self.channel, loop=self.loop)
             else:
