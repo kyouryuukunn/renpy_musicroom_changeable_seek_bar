@@ -1,4 +1,5 @@
 Add ren'Py the changeable seek bar and current position text "XX:XX/XX:XX" for Music Room.
+MusicRoomに再生位置を表示、変更出来るシークバーと現在時間のテキスト"XX:XX/XX:XX"を表示できるようにします。
 
 ![Demo](https://dl.dropboxusercontent.com/s/cyfizgl2pvk8w9x/musicroom2.png)
 
@@ -14,7 +15,7 @@ timer 1.0 repeat True action mr.timer
 bar adjustment mr.music_adj
 add mr.music_pos(size=10, italic=True)
 
-This code overwrites __MusicRoomPlay, renpy.audio.music.get_playing, and MusicRoom play and Play.
+This code overwrites __MusicRoomPlay and MusicRoom play and Play.
 This won't work if these are changed.
 
 
@@ -32,8 +33,9 @@ bar adjustment mr.music_adj
 スクリーンに再生位置を表示します。
 add mr.music_pos(size=10, italic=True)
 
-MusicRoomクラスのplayとPlay, __MusicRoomPlay, renpy.audio.music.get_playingを上書きしています。
+MusicRoomクラスのplayとPlay, __MusicRoomPlayを上書きしています。
 今後これらの関数が変更されると正常に動作しなくなるでしょう
 
+2022/6/25 Ren'Py 8.00で動作確認
 2020/3/22 動作確認
 2017/8/8 v6.99.12 で動作確認
