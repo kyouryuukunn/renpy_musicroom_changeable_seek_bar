@@ -1,7 +1,7 @@
 Add ren'Py the changeable seek bar and current position text "XX:XX/XX:XX" for Music Room.
 MusicRoomに再生位置を表示、変更出来るシークバーと現在時間のテキスト"XX:XX/XX:XX"を表示できるようにします。
 
-![Demo](https://dl.dropboxusercontent.com/s/cyfizgl2pvk8w9x/musicroom2.png)
+![Demo](https://dl.dropboxusercontent.com/s/yimd4lb1f45kxuz/musicroom2.png)
 
 How to Use
 1. create the MusicRoom2 instance instead of MusicRoom.
