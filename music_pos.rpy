@@ -171,7 +171,6 @@ init -100 python:
                 playlist[playlist.index(m.group(2))] = filename
 ########added##########
 
-            renpy.store.test = playlist
             if queue:
                 renpy.music.queue(playlist, channel=self.channel, loop=self.loop)
             else:
