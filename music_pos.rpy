@@ -17,6 +17,7 @@
 #MusicRoomクラスのplayとPlay, __MusicRoomPlayを上書きしています。
 #今後これらの関数が変更されると正常に動作しなくなるでしょう
 
+#2022/7/17 Ren'Py 8.0.1でreインスタンスが未定義だったのを修正動作確認
 #2022/6/26 Ren'Py 8.0.0で動作確認
 #2020/3/22 動作確認
 #2017/8/8 v6.99.12 で動作確認
@@ -26,6 +27,7 @@
 init -100 python:
 
     def remove_play_prefix(filename):
+        import re
         if filename is None:
             return None
         m = re.match(r'<(.*)>(.*)', filename)
@@ -85,6 +87,7 @@ init -100 python:
             return .1
 
     class MusicRoom2(MusicRoom):
+
         def __init__(self, *args, **kwargs):
             super(MusicRoom2, self).__init__(*args, **kwargs)
             self.music_text = "00:00/00:00"
@@ -125,6 +128,7 @@ init -100 python:
                 return self.play
 
 ########changed##########
+            import re
             # if filename not in self.filenames:
             m = re.match(r'<(.*)>(.*)', filename)
             if filename not in self.filenames and not m and m.group(2) not in self.filenames:
@@ -147,6 +151,7 @@ init -100 python:
 
             try:
 ########changed##########
+                import re
                 # idx = playlist.index(filename)
                 m = re.match(r'<(.*)>(.*)', filename) if filename is not None else None
                 if not m:
